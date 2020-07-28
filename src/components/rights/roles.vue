@@ -62,7 +62,7 @@
         <el-table-column label="操作" width="125px">
           <!-- 三个操作按钮 -->
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="编辑" placement="top" :enterable="false">
+            <el-tooltip class="item"  content="编辑" placement="top" :enterable="false">
               <el-button
                 type="primary"
                 icon="el-icon-edit"
@@ -73,7 +73,7 @@
             </el-tooltip>
             <el-tooltip
               class="item"
-              effect="dark"
+              
               content="分配权限"
               placement="top"
               :enterable="false"
@@ -86,7 +86,7 @@
                 @click="showsetrightdialog(scope.row)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="删除" placement="top" :enterable="false">
+            <el-tooltip class="item"  content="删除" placement="top" :enterable="false">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -204,9 +204,9 @@ export default {
       this.$refs.addFormRef.resetFields();
     },
     addrole() {
-      this.$refs.addFormRef.validate(async (value) => {
+      this.$refs.addFormRef.validate(async (valid) => {
         //若添加对话框验证不成功则返回
-        if (!value) {
+        if (!valid) {
           return;
         }
         //若添加对话框验证成功则发起添加角色的请求

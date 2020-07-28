@@ -5,7 +5,8 @@
       <div class="logo">
         <router-link to="home">
           <img src="../assets/logo/logo2.png" />
-         <span :style="iscollapse ? {display: 'none'} : {display: 'inline-block'}">Vue-Shop</span></router-link>
+          <span :style="iscollapse ? {display: 'none'} : {display: 'inline-block'}">Vue-Shop</span>
+        </router-link>
       </div>
       <el-menu
         class="el-menu-vertical-demo"
@@ -49,13 +50,16 @@
           <i :class="iscollapse ?'el-icon-s-unfold':'el-icon-s-fold'" style="line-height: 60px"></i>
         </div>
         <div style="float:right">
-          <el-button type="info" round @click="logout" >退出登录</el-button>
+          <el-button type="info" round @click="logout">退出登录</el-button>
         </div>
-        
       </el-header>
       <el-main>
         <!-- 显示子组件 -->
-        <router-view></router-view>
+        <transition name="fade-transform" mode="out-in">
+          
+            <router-view/>
+          
+        </transition>
       </el-main>
     </el-container>
   </el-container>
@@ -100,17 +104,14 @@ export default {
 
 <style lang="less" scoped>
 .el-header {
- 
   color: #333;
   line-height: 60px;
-  box-shadow: 0 2px 4px rgba(0,21,41,.08);
+  box-shadow: 0 2px 4px rgba(0, 21, 41, 0.08);
   z-index: 10;
-
-    
 }
 
 .el-aside {
-  box-shadow: 2px 0 6px rgba(0,21,41,.15);
+  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.15);
   z-index: 10;
   .el-menu {
     border-top: 2px solid #f8f8f8;
@@ -119,7 +120,7 @@ export default {
 }
 
 .el-main {
-  background-color: rgb(245,246,247);
+  background-color: rgb(245, 246, 247);
   color: #333;
 }
 
@@ -127,42 +128,57 @@ body > .el-container {
   margin-bottom: 40px;
 }
 
-
 .home-container {
   height: 100%;
 }
-.logo{
-    text-align: center;
-    height: 60px;
-    line-height: 60px;
-    img{
-      height: 65%;
-      display: inline-block;
-      margin-top: 10px;
-      vertical-align: -10px;
-    }
-    span{
-      font-size: 22px;
-      font-family: serif;
-      color: #333;
-      margin-left: 15px;
-    }
+.logo {
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
+  img {
+    height: 65%;
+    display: inline-block;
+    margin-top: 10px;
+    vertical-align: -10px;
   }
+  span {
+    font-size: 22px;
+    font-family: serif;
+    color: #333;
+    margin-left: 15px;
+  }
+}
 .iconfont {
   margin-right: 10px;
 }
-.toggle-btn{
-    float: left;
-    cursor: pointer;
-    margin-right: 30px;
-    i{
-      font-size: 20px;
-      color: #909399;
-    }
+.toggle-btn {
+  float: left;
+  cursor: pointer;
+  margin-right: 30px;
+  i {
+    font-size: 20px;
+    color: #909399;
   }
+}
 .collapse {
   color: white;
   text-align: center;
 }
 
+
+  /* fade-transform */
+  .fade-transform-leave-active,
+  .fade-transform-enter-active {
+    transition: all .5s;
+  }
+
+  .fade-transform-enter {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  .fade-transform-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
 </style>

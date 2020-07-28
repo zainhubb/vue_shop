@@ -40,10 +40,6 @@ Vue.use(VueRouter)
         component:()=>import('../components/orders/orders')
       },
       {
-        path:'/rights',
-        component:()=>import('../components/rights/rights')
-      },
-      {
         path:'/goods',
         component:()=>import('../components/goods/goods')
       },

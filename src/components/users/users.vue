@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column label="操作" width="125px" align="center">
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="编辑" placement="top" :enterable="false">
+            <el-tooltip class="item"  content="编辑" placement="top" :enterable="false">
               <el-button
                 type="primary"
                 icon="el-icon-edit"
@@ -50,14 +50,14 @@
             </el-tooltip>
             <el-tooltip
               class="item"
-              effect="dark"
+              
               content="分配角色"
               placement="top"
               :enterable="false"
             >
               <el-button type="warning" icon="el-icon-setting" size="mini" circle @click="showsetroledialog(scope.row)"></el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="删除" placement="top" :enterable="false">
+            <el-tooltip class="item"  content="删除" placement="top" :enterable="false">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -252,9 +252,9 @@ export default {
     },
     //添加用户
     adduser() {
-      this.$refs.adduserFormRef.validate(async (value) => {
+      this.$refs.adduserFormRef.validate(async (valid) => {
         //若添加对话框验证不成功则返回
-        if (!value) {
+        if (!valid) {
           return;
         }
         //若添加对话框验证成功则发起添加用户的请求

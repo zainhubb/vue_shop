@@ -6,7 +6,7 @@ import
         Menu,Submenu,MenuItem,Breadcrumb,BreadcrumbItem,
         Card,Row,Col,Table,TableColumn,Switch,Tooltip,
         Pagination,Dialog,MessageBox,Tag,Notification,
-        Tree,Select,Option
+        Tree,Select,Option,Cascader
 
     } 
     from 'element-ui'
@@ -24,6 +24,7 @@ Vue.use(Select)
 Vue.use(Card)
 Vue.use(Switch)
 Vue.use(Table)
+Vue.use(Cascader)
 Vue.use(Option)
 Vue.use(Tree)
 Vue.use(TableColumn)
