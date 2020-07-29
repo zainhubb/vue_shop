@@ -6,7 +6,7 @@ import
         Menu,Submenu,MenuItem,Breadcrumb,BreadcrumbItem,
         Card,Row,Col,Table,TableColumn,Switch,Tooltip,
         Pagination,Dialog,MessageBox,Tag,Notification,
-        Tree,Select,Option,Cascader
+        Tree,Select,Option,Cascader,Alert,Tabs,TabPane
 
     } 
     from 'element-ui'
@@ -16,7 +16,10 @@ Vue.use(Button)
 Vue.use(Dialog)
 Vue.use(Breadcrumb)
 Vue.use(BreadcrumbItem)
+Vue.use(Alert)
 Vue.use(Form)
+Vue.use(Tabs)
+Vue.use(TabPane)
 Vue.use(FormItem)
 Vue.use(Tag)
 Vue.use(Input)
