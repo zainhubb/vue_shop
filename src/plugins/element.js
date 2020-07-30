@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import
     { 
-        Form,FormItem,Input,Button, Message,
+        Form,FormItem,Input,Button,Message,
         Container,Aside,Main,Header,Footer,
         Menu,Submenu,MenuItem,Breadcrumb,BreadcrumbItem,
         Card,Row,Col,Table,TableColumn,Switch,Tooltip,
