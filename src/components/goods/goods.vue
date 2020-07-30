@@ -1,11 +1,12 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>商品列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    
     <el-card>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>商品管理</el-breadcrumb-item>
+        <el-breadcrumb-item>商品列表</el-breadcrumb-item>
+      </el-breadcrumb>
       <el-row :gutter="25">
         <el-col :span="8">
           <el-input placeholder="请输入内容" :clearable="true" v-model="queryinfo.query" @clear="getgoodslist">
@@ -13,7 +14,7 @@
           </el-input>
         </el-col>
         <el-col :span="5">
-          <el-button type="primary">添加商品</el-button>
+          <el-button type="primary" @click="gotoadd">添加商品</el-button>
         </el-col>
       </el-row>
       <el-table :data="goodslist" border stripe>
@@ -107,6 +108,9 @@ export default {
       this.$message.success("删除成功!");
       this.getgoodslist();
     },
+    gotoadd(){
+      this.$router.push('/goods/add')
+    }
   },
 };
 </script>

@@ -50,6 +50,10 @@ Vue.use(VueRouter)
       {
         path:'/params',
         component:()=>import('../components/goods/params')
+      },
+      {
+        path:'/goods/add',
+        component:()=>import('../components/goods/add')
       }
     ]
   }

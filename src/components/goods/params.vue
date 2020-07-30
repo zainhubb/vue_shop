@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>分类参数</el-breadcrumb-item>
-    </el-breadcrumb>
     <el-card>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>商品管理</el-breadcrumb-item>
+        <el-breadcrumb-item>分类参数</el-breadcrumb-item>
+      </el-breadcrumb>
       <el-alert show-icon title="注意，只允许为第三级分类设置相关参数！" type="warning" :closable="false"></el-alert>
       <!-- 选择商品分类 -->
       <el-row style="margin:15px 0">

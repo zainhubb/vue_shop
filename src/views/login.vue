@@ -91,7 +91,7 @@ export default {
 
 <style lang="less" scoped>
 .login_container {
-  background: white;
+  background: url(https://s1.ax1x.com/2020/07/30/anLb6g.jpg);
   background-size: cover;
   height: 100%;
 }

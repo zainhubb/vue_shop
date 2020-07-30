@@ -6,7 +6,8 @@ import
         Menu,Submenu,MenuItem,Breadcrumb,BreadcrumbItem,
         Card,Row,Col,Table,TableColumn,Switch,Tooltip,
         Pagination,Dialog,MessageBox,Tag,Notification,
-        Tree,Select,Option,Cascader,Alert,Tabs,TabPane
+        Tree,Select,Option,Cascader,Alert,Tabs,TabPane,
+        Step,Steps,CheckboxGroup,Checkbox,Upload
 
     } 
     from 'element-ui'
@@ -20,9 +21,14 @@ Vue.use(Alert)
 Vue.use(Form)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Checkbox)
+Vue.use(Upload)
+Vue.use(CheckboxGroup)
 Vue.use(FormItem)
 Vue.use(Tag)
 Vue.use(Input)
+Vue.use(Step)
+Vue.use(Steps)
 Vue.use(Select)
 Vue.use(Card)
 Vue.use(Switch)

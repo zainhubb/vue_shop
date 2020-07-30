@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-      <el-breadcrumb-item>角色列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <el-card>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
+        <el-breadcrumb-item>角色列表</el-breadcrumb-item>
+      </el-breadcrumb>
       <el-button type="primary" @click="adddialogVisible = true">添加角色</el-button>
       <el-table :data="rolelist" :border="true" style="width: 100%" :stripe="true">
         <!-- 权限展开展示 -->
@@ -62,7 +62,7 @@
         <el-table-column label="操作" width="125px">
           <!-- 三个操作按钮 -->
           <template slot-scope="scope">
-            <el-tooltip class="item"  content="编辑" placement="top" :enterable="false">
+            <el-tooltip class="item" content="编辑" placement="top" :enterable="false">
               <el-button
                 type="primary"
                 icon="el-icon-edit"
@@ -71,13 +71,7 @@
                 @click="showeditdialog(scope.row.id)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip
-              class="item"
-              
-              content="分配权限"
-              placement="top"
-              :enterable="false"
-            >
+            <el-tooltip class="item" content="分配权限" placement="top" :enterable="false">
               <el-button
                 type="warning"
                 icon="el-icon-setting"
@@ -86,7 +80,7 @@
                 @click="showsetrightdialog(scope.row)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip class="item"  content="删除" placement="top" :enterable="false">
+            <el-tooltip class="item" content="删除" placement="top" :enterable="false">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -136,7 +130,12 @@
       </span>
     </el-dialog>
     <!-- 分配权限对话框 -->
-    <el-dialog title="分配权限" :visible.sync="setrightdialogVisible" width="50%" @close="resetsetright">
+    <el-dialog
+      title="分配权限"
+      :visible.sync="setrightdialogVisible"
+      width="50%"
+      @close="resetsetright"
+    >
       <!-- 树形控件 -->
       <el-tree
         :data="rightslist"
@@ -186,7 +185,7 @@ export default {
       },
       editroleForm: {},
       // 即将分配全选的角色id
-      roleid: ''
+      roleid: "",
     };
   },
   created() {
@@ -301,7 +300,7 @@ export default {
       role.children = result.data;
     },
     async showsetrightdialog(role) {
-      this.roleid = role.id
+      this.roleid = role.id;
       const { data: result } = await this.$http.get("rights/tree");
       if (result.meta.status !== 200) {
         return this.$message.error("获取角色权限失败!");
@@ -322,23 +321,25 @@ export default {
       });
     },
     // 监听分配权限对话框的关闭事件,每次关闭对话框清空defkeys
-    resetsetright(){
-      this.defkeys=[]
+    resetsetright() {
+      this.defkeys = [];
     },
-    async allotrights(){
+    async allotrights() {
       const keys = [
         ...this.$refs.treeRef.getCheckedKeys(),
         ...this.$refs.treeRef.getHalfCheckedKeys(),
-      ]
-      const idStr = keys.join(',')
-      const {data:result} = await this.$http.post(`roles/${this.roleid}/rights`,{rids:idStr})
-      if(result.meta.status !== 200){
-        return this.$message.error("分配权限失败!")
+      ];
+      const idStr = keys.join(",");
+      const {
+        data: result,
+      } = await this.$http.post(`roles/${this.roleid}/rights`, { rids: idStr });
+      if (result.meta.status !== 200) {
+        return this.$message.error("分配权限失败!");
       }
-      this.setrightdialogVisible = false
-      this.$message.success("分配权限成功!")
-      this.getrolelist()
-    }
+      this.setrightdialogVisible = false;
+      this.$message.success("分配权限成功!");
+      this.getrolelist();
+    },
   },
 };
 </script>

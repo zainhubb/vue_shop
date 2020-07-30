@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <!-- 卡片视图区域 -->
     <el-card>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+        <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+      </el-breadcrumb>
       <!-- 搜索和添加用户 -->
       <el-row :gutter="25">
         <!-- 搜索框 -->
@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column label="操作" width="125px" align="center">
           <template slot-scope="scope">
-            <el-tooltip class="item"  content="编辑" placement="top" :enterable="false">
+            <el-tooltip class="item" content="编辑" placement="top" :enterable="false">
               <el-button
                 type="primary"
                 icon="el-icon-edit"
@@ -48,16 +48,16 @@
                 @click="showeditdialog(scope.row.id)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip
-              class="item"
-              
-              content="分配角色"
-              placement="top"
-              :enterable="false"
-            >
-              <el-button type="warning" icon="el-icon-setting" size="mini" circle @click="showsetroledialog(scope.row)"></el-button>
+            <el-tooltip class="item" content="分配角色" placement="top" :enterable="false">
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                size="mini"
+                circle
+                @click="showsetroledialog(scope.row)"
+              ></el-button>
             </el-tooltip>
-            <el-tooltip class="item"  content="删除" placement="top" :enterable="false">
+            <el-tooltip class="item" content="删除" placement="top" :enterable="false">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -124,7 +124,7 @@
       <div>
         <p>当前用户:{{this.userinfo.username}}</p>
         <p>当前角色:{{this.userinfo.role_name}}</p>
-         <p>
+        <p>
           分配新角色:
           <el-select v-model="selectedrole" placeholder="请选择">
             <el-option
@@ -136,7 +136,7 @@
           </el-select>
         </p>
       </div>
-      
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="setroledialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="setrole">确 定</el-button>
@@ -215,11 +215,11 @@ export default {
       //编辑对话框查询到的用户信息
       edituserForm: {},
       // 需要被分配角色的用户信息
-      userinfo:{},
+      userinfo: {},
       // 所有角色的数据列表
-      roleslist:[],
+      roleslist: [],
       // 已选择分配的角色
-      selectedrole:'',
+      selectedrole: "",
     };
   },
   created() {
@@ -325,36 +325,37 @@ export default {
       this.$message.success("删除成功!");
       this.getUserlist();
     },
-    async showsetroledialog(userinfo){
-      this.userinfo = userinfo
+    async showsetroledialog(userinfo) {
+      this.userinfo = userinfo;
       // 展示对话框之前展示获取角色
-      const {data:result} = await this.$http.get('roles')
-      if(result.meta.status !==200){
-        return this.$message.error("获取角色列表失败!")
+      const { data: result } = await this.$http.get("roles");
+      if (result.meta.status !== 200) {
+        return this.$message.error("获取角色列表失败!");
       }
-      this.roleslist = result.data
-      this.setroledialogVisible = true
+      this.roleslist = result.data;
+      this.setroledialogVisible = true;
     },
-    async setrole(role){
-      if(!this.selectedrole){
-        return this.$message.error("请选择一个角色!")
+    async setrole(role) {
+      if (!this.selectedrole) {
+        return this.$message.error("请选择一个角色!");
       }
-      const {data:result} = await this.$http.put(`users/${this.userinfo.id}/role`,
-      {
-        rid:this.selectedrole
-      })
-      if(result.meta.status !==200){
-        return this.$message.error("更新用户角色失败!")
+      const { data: result } = await this.$http.put(
+        `users/${this.userinfo.id}/role`,
+        {
+          rid: this.selectedrole,
+        }
+      );
+      if (result.meta.status !== 200) {
+        return this.$message.error("更新用户角色失败!");
       }
-      this.getUserlist()
-      this.setroledialogVisible = false
-      return this.$message.success("更新用户角色成功!")
+      this.getUserlist();
+      this.setroledialogVisible = false;
+      return this.$message.success("更新用户角色成功!");
     },
     //重置分配角色对话框
-    resetsetrole(){
-      this.selectedrole = ''
-      
-    }
+    resetsetrole() {
+      this.selectedrole = "";
+    },
   },
 };
 </script>
