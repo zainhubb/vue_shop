@@ -38,10 +38,11 @@
                 size="mini"
                 circle
                 @click="showeditdialog(scope.row)"
+                style="margin:0 15px"
               ></el-button>
             </el-tooltip>
             <el-tooltip class="item" content="删除" placement="top" :enterable="false">
-              <el-button type="danger" icon="el-icon-delete" size="mini" circle @click="removecatebyid(scope.row.cat_id)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini" circle @click="removecatebyid(scope.row.cat_id)" style="margin:0 15px"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>

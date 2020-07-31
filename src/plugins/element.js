@@ -7,7 +7,8 @@ import
         Card,Row,Col,Table,TableColumn,Switch,Tooltip,
         Pagination,Dialog,MessageBox,Tag,Notification,
         Tree,Select,Option,Cascader,Alert,Tabs,TabPane,
-        Step,Steps,CheckboxGroup,Checkbox,Upload
+        Step,Steps,CheckboxGroup,Checkbox,Upload,Timeline,
+        TimelineItem
 
     } 
     from 'element-ui'
@@ -21,6 +22,8 @@ Vue.use(Alert)
 Vue.use(Form)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Timeline)
+Vue.use(TimelineItem)
 Vue.use(Checkbox)
 Vue.use(Upload)
 Vue.use(CheckboxGroup)

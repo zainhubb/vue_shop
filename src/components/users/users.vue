@@ -103,7 +103,7 @@
     </el-dialog>
     <!-- 编辑用户对话框 -->
     <el-dialog title="编辑用户" :visible.sync="editdialogVisible" width="45%">
-      <el-form :model="edituserForm" :rules="addRules" label-width="70px" ref="edituserFormRef">
+      <el-form :model="edituserForm" :rules="addRules" label-width="100px" ref="edituserFormRef">
         <el-form-item label="用户名">
           <el-input v-model="edituserForm.username" disabled></el-input>
         </el-form-item>

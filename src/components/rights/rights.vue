@@ -7,7 +7,7 @@
         <el-breadcrumb-item>权限列表</el-breadcrumb-item>
       </el-breadcrumb>
       <el-table :data="rightlist" :border="true" style="width: 100%" :stripe="true">
-        <el-table-column type="index" label="#" align="center"></el-table-column>
+        <el-table-column type="index"  align="center"></el-table-column>
         <el-table-column prop="authName" label="权限名称" align="center"></el-table-column>
         <el-table-column prop="path" label="路径" align="center"></el-table-column>
         <el-table-column prop="level" label="权限等级" align="center">

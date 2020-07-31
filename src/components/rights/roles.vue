@@ -9,7 +9,7 @@
       <el-button type="primary" @click="adddialogVisible = true">添加角色</el-button>
       <el-table :data="rolelist" :border="true" style="width: 100%" :stripe="true">
         <!-- 权限展开展示 -->
-        <el-table-column type="expand" label="展示" align="center">
+        <el-table-column type="expand" label="展开" align="center">
           <template slot-scope="scope">
             <el-row
               v-for="(item1,i1) in scope.row.children"
@@ -50,13 +50,10 @@
                 </el-row>
               </el-col>
             </el-row>
-            <pre>
-              {{scope.row}}
-              </pre>
           </template>
         </el-table-column>
         <!-- 索引列 -->
-        <el-table-column type="index" label="#" align="center"></el-table-column>
+        <el-table-column type="index"  align="center"></el-table-column>
         <el-table-column prop="roleName" label="角色名称" align="center"></el-table-column>
         <el-table-column prop="roleDesc" label="角色描述" align="center"></el-table-column>
         <el-table-column label="操作" width="125px">
@@ -279,7 +276,7 @@ export default {
     async removerightbyid(role, rightid) {
       //删除前确认
       const confirmresult = await this.$confirm(
-        "此操作将对改角色永久删除此权限, 是否继续?",
+        "此操作将删除该角色此权限, 是否继续?",
         "提示",
         {
           confirmButtonText: "确定",
