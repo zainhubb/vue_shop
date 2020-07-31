@@ -11,6 +11,7 @@ import './plugins/element.js'
 import './assets/css/golbal.css'
 import  './assets/fonts/iconfont.css'
 import axios from 'axios'
+// 加载进度条
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 Vue.use(VueQuillEditor, /* { default global options } */)
