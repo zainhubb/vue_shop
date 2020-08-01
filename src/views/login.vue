@@ -64,20 +64,20 @@ export default {
         //把取得的对象中data对象给result
         if (result.meta.status !== 200)
           return this.$notify({
-            title:'登录失败!',
-            message:'请检查用户名和密码',
-            type:'error',
+            title: "登录失败!",
+            message: "请检查用户名和密码",
+            type: "error",
             offset: 80,
-            position: 'bottom-right',
-            duration: 2000
-          })
+            position: "bottom-right",
+            duration: 2000,
+          });
         this.$notify({
-          title: '登录成功!',
-          message: '欢迎来到本后台管理系统',
-          type: 'success',
+          title: "登录成功!",
+          message: "欢迎来到本后台管理系统",
+          type: "success",
           offset: 80,
-          position: 'bottom-right',
-          duration: 2000
+          position: "bottom-right",
+          duration: 2000,
         });
         window.sessionStorage.setItem("token", result.data.token);
         //登录成功,存放token
@@ -91,14 +91,16 @@ export default {
 
 <style lang="less" scoped>
 .login_container {
-  background: url(https://s1.ax1x.com/2020/07/30/anLb6g.jpg);
+  background: url(https://s1.ax1x.com/2020/07/31/aQDXYn.jpg);
+  background-position: center;
+
   background-size: cover;
   height: 100%;
 }
 .login_box {
   width: 450px;
   height: 300px;
-    background: rgba(255, 255, 255, 0.212);
+  background: rgba(255, 255, 255, 0.212);
   border-radius: 15px;
   position: absolute;
   left: 50%;
@@ -122,7 +124,7 @@ export default {
     height: 100%;
     width: 100%;
     border-radius: 50%;
-    background-color: rgb(206, 206, 206);
+    background-color: rgba(206, 206, 206);
   }
 }
 .login_form {
