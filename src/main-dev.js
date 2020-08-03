@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import baseurl from './baseUrl'
 import './assets/css/golbal.css'
 import  './assets/fonts/iconfont.css'
 // 导入富文本编辑器
@@ -17,7 +18,7 @@ import './plugins/element.js'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 Vue.use(VueQuillEditor, /* { default global options } */)
-axios.defaults.baseURL='http://127.0.0.1:8888/api/private/v1/'
+axios.defaults.baseURL= baseurl
 // 在request拦截器中,展示进度条NProgress.start()
 axios.interceptors.request.use(config =>{
   config.headers.Authorization = window.sessionStorage.getItem("token")

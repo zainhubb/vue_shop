@@ -24,4 +24,5 @@ pnpm-debug.log*
 
 
 *.sh
+baseUrl.js  
 
