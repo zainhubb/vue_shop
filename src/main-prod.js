@@ -16,7 +16,7 @@ import NProgress from 'nprogress'
 
 
 Vue.use(VueQuillEditor, /* { default global options } */)
-axios.defaults.baseURL='https://www.liulongbin.top:8888/api/private/v1/'
+axios.defaults.baseURL='http://120.24.4.171:8888/api/private/v1/'
 // 在request拦截器中,展示进度条NProgress.start()
 axios.interceptors.request.use(config =>{
   config.headers.Authorization = window.sessionStorage.getItem("token")
