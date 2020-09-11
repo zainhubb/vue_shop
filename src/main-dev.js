@@ -15,24 +15,8 @@ import './plugins/element.js'
 
 
 // 加载进度条
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
 Vue.use(VueQuillEditor, /* { default global options } */)
 
-axios.defaults.baseURL= baseurl
-
-// 在request拦截器中,展示进度条NProgress.start()
-axios.interceptors.request.use(config =>{
-  config.headers.Authorization = window.sessionStorage.getItem("token")
-  NProgress.start()
-  return config
-})
-// 在request拦截器中,隐藏进度条NProgress.done()
-axios.interceptors.response.use(config =>{
-  NProgress.done()
-  return config
-})
-Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 // 格式化时间过滤器
