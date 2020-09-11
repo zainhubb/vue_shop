@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { getreports_api } from '../../api/reports_api'
 import _ from 'lodash'
 // 1.导入echart
 import echarts from 'echarts'
@@ -55,20 +56,22 @@ export default {
 
   },
   // dom元素初始化完毕后执行mounted
-  async mounted(){
+   mounted(){
         // 3.基于准备好的dom，初始化echarts实例
         let Chart = echarts.init(document.getElementById('main'));
 
         
         // 4.准备数据和配置项
         // 获取折线图数据
-        const{data:result} = await this.$http.get('reports/type/1')
-        if(result.meta.status !== 200){
+        getreports_api().then(res=>{
+        if(res.data.meta.status !== 200){
           return this.$message.error("获取折线图数据失败!")
         }
-        const res = _.merge(result.data,this.option)
+        const result = _.merge(res.data.data,this.option)
           // 5.使用刚指定的配置项和数据显示图表。
-        Chart.setOption(res);
+        Chart.setOption(result);
+        })
+
   },
   methods:{
     

@@ -87,6 +87,7 @@
 </template>
 
 <script>
+import { getorders_api, getlogistics_api } from "../../api/orders_api";
 import cityData from "./citydata";
 export default {
   data() {
@@ -111,7 +112,7 @@ export default {
         address2: "",
       },
       // 物流信息
-      progressinfo:[],
+      progressinfo: [],
       editRules: {
         address2: [
           { required: true, message: "请输入详细地址", trigger: "blur" },
@@ -128,17 +129,15 @@ export default {
     this.getorderlist();
   },
   methods: {
-    async getorderlist() {
-      const { data: result } = await this.$http.get("orders", {
-        params: this.queryinfo,
+    getorderlist() {
+      getorders_api(this.queryinfo).then((res) => {
+        console.log(res.data);
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("订单列表获取失败!");
+        }
+        this.orderlist = res.data.data.goods;
+        this.total = res.data.data.total;
       });
-      if (result.meta.status !== 200) {
-        return this.$message.error("订单列表获取失败!");
-      }
-      this.orderlist = result.data.goods;
-      this.total = result.data.total;
-
-      console.log(this.orderlist);
     },
     handleSizeChange(newpagesize) {
       this.queryinfo.pagesize = newpagesize;
@@ -151,14 +150,15 @@ export default {
     close() {
       this.$refs.editorderFormRef.resetFields();
     },
-    async showprogress() {
-      const { data: result } = await this.$http.get("kuaidi/1106975712662");
-      if (result.meta.status !== 200) {
-        return this.$message.error("物流信息获取失败!");
-      }
-      this.progressinfo = result.data
-      console.log(this.progressinfo);
-      this.progressdialogVisible = true;
+    showprogress() {
+      getlogistics_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("物流信息获取失败!");
+        }
+        this.progressinfo = res.data.data;
+        console.log(this.progressinfo);
+        this.progressdialogVisible = true;
+      });
     },
   },
 };

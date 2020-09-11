@@ -7,7 +7,7 @@
         <el-breadcrumb-item>权限列表</el-breadcrumb-item>
       </el-breadcrumb>
       <el-table :data="rightlist" :border="true" style="width: 100%" :stripe="true">
-        <el-table-column type="index"  align="center"></el-table-column>
+        <el-table-column type="index" align="center"></el-table-column>
         <el-table-column prop="authName" label="权限名称" align="center"></el-table-column>
         <el-table-column prop="path" label="路径" align="center"></el-table-column>
         <el-table-column prop="level" label="权限等级" align="center">
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import {getrights_api} from "../../api/rights_api";
 export default {
   data() {
     return {
@@ -34,12 +35,13 @@ export default {
     this.getrightlist();
   },
   methods: {
-    async getrightlist() {
-      const { data: result } = await this.$http.get("rights/list");
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取权限列表失败!");
-      }
-      this.rightlist = result.data;
+    getrightlist() {
+      getrights_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取权限列表失败!");
+        }
+        this.rightlist = res.data.data;
+      });
     },
   },
 };

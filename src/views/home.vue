@@ -56,9 +56,7 @@
       <el-main>
         <!-- 显示子组件 -->
         <transition name="fade-transform" mode="out-in">
-          
-            <router-view/>
-          
+          <router-view></router-view>
         </transition>
       </el-main>
     </el-container>
@@ -66,17 +64,19 @@
 </template>
 
 <script>
+import { getmenulist_api } from "../api/home_api";
+import axios from "axios";
 export default {
   data() {
     return {
       menulist: [],
       // 侧边栏数据
       iconObj: {
-        "125": "iconfont icon-users",
-        "103": "iconfont icon-tijikongjian",
-        "101": "iconfont icon-shangpin",
-        "102": "iconfont icon-danju",
-        "145": "iconfont icon-baobiao",
+        125: "iconfont icon-users",
+        103: "iconfont icon-tijikongjian",
+        101: "iconfont icon-shangpin",
+        102: "iconfont icon-danju",
+        145: "iconfont icon-baobiao",
       },
       iscollapse: false,
     };
@@ -89,11 +89,22 @@ export default {
       window.sessionStorage.removeItem("token"); //清除token
       this.$router.push("/login"); //跳转至登录页面
     },
-    async getMenulist() {
-      const { data: res } = await this.$http.get("menus");
+    // async getMenulist() {
 
-      if (res.meta.status !== 200) return this.$message.error(res.meta.msg);
-      this.menulist = res.data;
+    //   const { data: res } = await this.$http("menus");
+
+    //   console.log(res);
+
+    //   if (res.meta.status !== 200)
+    //     return this.$message.error(res.meta.msg);
+    //   this.menulist = res.data;
+    // },
+    getMenulist() {
+      getmenulist_api().then((res) => {
+        if (res.data.meta.status !== 200)
+          return this.$message.error(res.data.meta.msg);
+        this.menulist = res.data.data;
+      });
     },
     collapse() {
       this.iscollapse = !this.iscollapse;
@@ -165,20 +176,19 @@ body > .el-container {
   text-align: center;
 }
 
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all 0.5s;
+}
 
-  /* fade-transform */
-  .fade-transform-leave-active,
-  .fade-transform-enter-active {
-    transition: all .5s;
-  }
+.fade-transform-enter {
+  opacity: 0;
+  transform: translateX(-30px);
+}
 
-  .fade-transform-enter {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  .fade-transform-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
-  }
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
 </style>

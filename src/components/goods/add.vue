@@ -93,7 +93,8 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import { getcatelist_api, getinfo_api, addgood_api } from "../../api/goods_api";
+import _ from "lodash";
 export default {
   data() {
     return {
@@ -101,9 +102,9 @@ export default {
       // 添加商品的表单对象
       addForm: {
         goods_name: "",
-        goods_price: '',
-        goods_weight: '',
-        goods_number: '',
+        goods_price: "",
+        goods_weight: "",
+        goods_number: "",
         goods_cat: [],
         // 图片
         pics: [],
@@ -155,12 +156,13 @@ export default {
   },
   methods: {
     // 获取所有商品分类数据
-    async getcatelist() {
-      const { data: result } = await this.$http.get("categories");
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取商品分类失败!");
-      }
-      this.catelist = result.data;
+    getcatelist() {
+      getcatelist_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取商品分类失败!");
+        }
+        this.catelist = res.data.data;
+      });
     },
     // 级联选择器选中项变化触发
     handlechange() {
@@ -174,37 +176,30 @@ export default {
         return false;
       }
     },
-    async tabclicked() {
+    tabclicked() {
+      console.log(this.activeindex);
       if (this.activeindex === "1") {
-        const { data: result } = await this.$http.get(
-          `categories/${this.cateid}/attributes`,
-          {
-            params: {
-              sel: "many",
-            },
+        getinfo_api(this.cateid, {
+          sel: "many",
+        }).then((res) => {
+          if (res.data.meta.status !== 200) {
+            this.$message.error("获取动态参数列表失败!");
           }
-        );
-        if (result.meta.status !== 200) {
-          this.$message.error("获取动态参数列表失败!");
-        }
-        result.data.forEach((item) => {
-          item.attr_vals =
-            item.attr_vals.length === 0 ? [] : item.attr_vals.split(" ");
+          res.data.data.forEach((item) => {
+            item.attr_vals =
+              item.attr_vals.length === 0 ? [] : item.attr_vals.split(" ");
+          });
+          this.manytabledata = res.data.data;
         });
-        this.manytabledata = result.data;
       } else if (this.activeindex === "2") {
-        const { data: result } = await this.$http.get(
-          `categories/${this.cateid}/attributes`,
-          {
-            params: {
-              sel: "only",
-            },
+        getinfo_api(this.cateid, {
+          sel: "only",
+        }).then((res) => {
+          if (res.data.meta.status !== 200) {
+            this.$message.error("获取静态列表失败!");
           }
-        );
-        if (result.meta.status !== 200) {
-          this.$message.error("获取静态列表失败!");
-        }
-        this.onlytabledata = result.data;
+          this.onlytabledata = res.data.data;
+        });
       }
     },
     // 处理图片预览效果
@@ -226,34 +221,36 @@ export default {
       // 2.将图片信息对象,push到pics数组中
       this.addForm.pics.push(picInfo);
     },
-     addgood() {
-      this.$refs.addFormRef.validate(async valid => {
+    addgood() {
+      this.$refs.addFormRef.validate((valid) => {
         if (!valid) {
           return this.$message.error("请完善商品基本信息!");
         }
         // 执行添加的业务逻辑
-        const form = _.cloneDeep(this.addForm)
-        form.goods_cat = form.goods_cat.join(',')
+        const form = _.cloneDeep(this.addForm);
+        form.goods_cat = form.goods_cat.join(",");
         // 处理动态参数
-        this.manytabledata.forEach(item=>{
-            const newinfo = {addr_id: item.addr_id,attr_value: item.attr_vals.join(' ')}
-            this.addForm.attrs.push(newinfo)
-        })
+        this.manytabledata.forEach((item) => {
+          const newinfo = {
+            addr_id: item.addr_id,
+            attr_value: item.attr_vals.join(" "),
+          };
+          this.addForm.attrs.push(newinfo);
+        });
         // 处理静态属性
-        this.onlytabledata.forEach(item=>{
-            const newinfo = {addr_id: item.addr_id,attr_value: item.attr_vals}
-            this.addForm.attrs.push(newinfo)
-        })
-        form.attrs = this.addForm.attrs
+        this.onlytabledata.forEach((item) => {
+          const newinfo = { addr_id: item.addr_id, attr_value: item.attr_vals };
+          this.addForm.attrs.push(newinfo);
+        });
+        form.attrs = this.addForm.attrs;
         // 发起请求添加商品,商品名必须是唯一的
-        const {data:result} = await this.$http.post('goods',form)
-        console.log(form);
-        console.log(result);
-        if(result.meta.status !==201){
-            return this.$message.error("添加商品失败!")
-        }
-        this.$message.success("添加商品成功!")
-        this.$router.push('/goods')
+        addgood_api(form).then((res) => {
+          if (res.data.meta.status !== 201) {
+            return this.$message.error("添加商品失败!");
+          }
+          this.$message.success("添加商品成功!");
+            this.$router.push("/goods");
+        });
       });
     },
   },

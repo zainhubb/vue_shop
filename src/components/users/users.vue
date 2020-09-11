@@ -146,6 +146,15 @@
 </template>
 
 <script>
+import {
+  getuserlist_api,
+  setrole_api,
+  deleteuser_api,
+  getuser_api,
+  edituser_api,
+  adduser_api,
+} from "../../api/users_api";
+import {  getroles_api } from '../../api/rights_api'
 export default {
   data() {
     //验证邮箱
@@ -226,15 +235,24 @@ export default {
     this.getUserlist();
   },
   methods: {
-    async getUserlist() {
-      const { data: res } = await this.$http.get("users", {
-        params: this.queryinfo,
+    // async getUserlist() {
+    //   const { data: res } = await this.$http.get("users", {
+    //     params: this.queryinfo,
+    //   });
+    //   if (res.meta.status !== 200) {
+    //     return this.$message({ message: "获取用户列表失败", type: "error" });
+    //   }
+    //   this.usersinfo = res.data.users;
+    //   this.total = res.data.total;
+    // },
+    getUserlist() {
+      getuserlist_api(this.queryinfo).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message({ message: "获取用户列表失败", type: "error" });
+        }
+        this.usersinfo = res.data.data.users;
+        this.total = res.data.data.total;
       });
-      if (res.meta.status !== 200) {
-        return this.$message({ message: "获取用户列表失败", type: "error" });
-      }
-      this.usersinfo = res.data.users;
-      this.total = res.data.total;
     },
     handleCurrentChange(newpagenum) {
       //监听页码值的变化
@@ -252,35 +270,34 @@ export default {
     },
     //添加用户
     adduser() {
-      this.$refs.adduserFormRef.validate(async (valid) => {
+      this.$refs.adduserFormRef.validate((valid) => {
         //若添加对话框验证不成功则返回
         if (!valid) {
           return;
         }
         //若添加对话框验证成功则发起添加用户的请求
-        const { data: result } = await this.$http.post(
-          "users",
-          this.adduserForm
-        );
-        if (result.meta.status !== 201) {
-          return this.$message({
-            message: "添加用户失败,该用户名已存在",
-            type: "error",
-          });
-        }
-        this.getUserlist();
-        this.adddialogVisible = false;
-        this.$message({ message: "添加用户成功!", type: "success" });
+        adduser_api(this.adduserForm).then((res) => {
+          if (res.data.meta.status !== 201) {
+            return this.$message({
+              message: "添加用户失败!",
+              type: "error",
+            });
+          }
+          this.getUserlist();
+          this.adddialogVisible = false;
+          this.$message({ message: "添加用户成功!", type: "success" });
+        });
       });
     },
     //获取编辑用户对话框信息
-    async showeditdialog(id) {
-      const { data: result } = await this.$http.get("users/" + id);
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取用户信息失败");
-      }
-      this.edituserForm = result.data;
-      this.editdialogVisible = true;
+    showeditdialog(id) {
+      getuser_api(id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取用户信息失败");
+        }
+        this.edituserForm = res.data.data;
+        this.editdialogVisible = true;
+      });
     },
     // 发送编辑用户请求
     async edituserinfo() {
@@ -289,19 +306,20 @@ export default {
           return;
         }
         //若编辑对话框验证成功则发起修改用户信息的请求
-        const { data: result } = await this.$http.put(
-          "users/" + this.edituserForm.id,
-          { email: this.edituserForm.email, mobile: this.edituserForm.mobile }
-        );
-        if (result.meta.status !== 200) {
-          return this.$message.error("修改失败!");
-        }
-        //修改成功关闭对话框
-        this.editdialogVisible = false;
-        //更新用户列表
-        this.getUserlist();
-        //提示修改成功
-        this.$message.success("修改成功!");
+        edituser_api(this.edituserForm.id, {
+          email: this.edituserForm.email,
+          mobile: this.edituserForm.mobile,
+        }).then((res) => {
+          if (res.data.meta.status !== 200) {
+            return this.$message.error("修改失败!");
+          }
+          //修改成功关闭对话框
+          this.editdialogVisible = false;
+          //更新用户列表
+          this.getUserlist();
+          //提示修改成功
+          this.$message.success("修改成功!");
+        });
       });
     },
     // 删除用户
@@ -318,39 +336,36 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      const { data: result } = await this.$http.delete("users/" + id);
-      if (result.meta.status !== 200) {
-        return this.$message.error("删除失败!");
-      }
-      this.$message.success("删除成功!");
-      this.getUserlist();
+      deleteuser_api(id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("删除失败!");
+        }
+        this.$message.success("删除成功!");
+        this.getUserlist();
+      });
     },
-    async showsetroledialog(userinfo) {
+    showsetroledialog(userinfo) {
       this.userinfo = userinfo;
-      // 展示对话框之前展示获取角色
-      const { data: result } = await this.$http.get("roles");
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取角色列表失败!");
-      }
-      this.roleslist = result.data;
-      this.setroledialogVisible = true;
+      getroles_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取角色列表失败!");
+        }
+        this.roleslist = res.data.data;
+        this.setroledialogVisible = true;
+      });
     },
-    async setrole(role) {
+    setrole(role) {
       if (!this.selectedrole) {
         return this.$message.error("请选择一个角色!");
       }
-      const { data: result } = await this.$http.put(
-        `users/${this.userinfo.id}/role`,
-        {
-          rid: this.selectedrole,
+      setrole_api(this.userinfo.id, { rid: this.selectedrole }).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("更新用户角色失败!");
         }
-      );
-      if (result.meta.status !== 200) {
-        return this.$message.error("更新用户角色失败!");
-      }
-      this.getUserlist();
-      this.setroledialogVisible = false;
-      return this.$message.success("更新用户角色成功!");
+        this.getUserlist();
+        this.setroledialogVisible = false;
+        return this.$message.success("更新用户角色成功!");
+      });
     },
     //重置分配角色对话框
     resetsetrole() {

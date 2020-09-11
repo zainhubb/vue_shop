@@ -42,7 +42,14 @@
               ></el-button>
             </el-tooltip>
             <el-tooltip class="item" content="删除" placement="top" :enterable="false">
-              <el-button type="danger" icon="el-icon-delete" size="mini" circle @click="removecatebyid(scope.row.cat_id)" style="margin:0 15px"></el-button>
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                circle
+                @click="removecatebyid(scope.row.cat_id)"
+                style="margin:0 15px"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -100,6 +107,14 @@
 </template>
 
 <script>
+import {
+  getcatelist2_api,
+  getParentcatelist_api,
+  getcate_api,
+  addCate_api,
+  removecatebyid_api,
+  editcate_api,
+} from "../../api/goods_api";
 export default {
   data() {
     return {
@@ -146,17 +161,16 @@ export default {
   },
   methods: {
     // 获取商品分类数据
-    async getcatelist() {
-      const { data: result } = await this.$http.get("categories", {
-        params: this.queryinfo,
+    getcatelist() {
+      getcatelist2_api(this.queryinfo).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("商品分类获取失败!");
+        }
+        // 把商品分类数据保存
+        this.catelist = res.data.data.result;
+        // 为总数据条数赋值
+        this.total = res.data.data.total;
       });
-      if (result.meta.status !== 200) {
-        return this.$message.error("商品分类获取失败!");
-      }
-      // 把商品分类数据保存
-      this.catelist = result.data.result;
-      // 为总数据条数赋值
-      this.total = result.data.total;
     },
     handleCurrentChange(newpagenum) {
       //监听页码值的变化
@@ -173,25 +187,23 @@ export default {
       this.getParentcatelist();
       this.adddialogVisible = true;
     },
-    async showeditdialog(cate) {
-      const { data: result } = await this.$http.get(
-        "categories/" + cate.cat_id
-      );
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取分类信息失败");
-      }
-      this.editcateForm = result.data;
-      this.editdialogVisible = true;
+    showeditdialog(cate) {
+      getcate_api(cate.cat_id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取分类信息失败");
+        }
+        this.editcateForm = res.data.data;
+        this.editdialogVisible = true;
+      });
     },
     // 获取父级分类的数据列表
-    async getParentcatelist() {
-      const { data: result } = await this.$http.get("categories", {
-        params: { type: 2 },
+    getParentcatelist() {
+      getParentcatelist_api({ type: 2 }).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取父级分类失败!");
+        }
+        this.parentcatelist = res.data.data;
       });
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取父级分类失败!");
-      }
-      this.parentcatelist = result.data;
     },
     parentcatechange() {
       // 如果selectedkeys数组length大于0,则表示已经选择某个分类
@@ -204,18 +216,17 @@ export default {
     },
     addCate() {
       console.log(this.addcateForm);
-      this.$refs.addcateFormRef.validate(async (valid) => {
+      this.$refs.addcateFormRef.validate( (valid) => {
         if (!valid) return;
-        const { data: result } = await this.$http.post(
-          "categories",
-          this.addcateForm
-        );
-        if (result.meta.status !== 201) {
-          return this.$message.error("添加分类失败!");
-        }
-        this.$message.success("添加分类成功!");
-        this.getcatelist();
-        this.adddialogVisible = false;
+
+        addCate_api(this.addcateForm).then((res) => {
+          if (res.data.meta.status !== 201) {
+            return this.$message.error("添加分类失败!");
+          }
+          this.$message.success("添加分类成功!");
+          this.getcatelist();
+          this.adddialogVisible = false;
+        });
       });
     },
     resetaddcateform() {
@@ -223,20 +234,23 @@ export default {
       this.selectedkeys = [];
       (this.addcateForm.cat_pid = 0), (this.addcateForm.cat_level = 0);
     },
-    editcate(){
-      this.$refs.editcateFormRef.validate(async (valid)=>{
-        if(!valid) return
-        const{data:result} = await this.$http.put("categories/"+this.editcateForm.cat_id,{cat_name:this.editcateForm.cat_name})
-        if(result.meta.status !==200){
-          return this.$message.error("修改分类失败!") 
-        }
-        this.$message.success("修改分类成功!")
-        this.getcatelist()
-        this.editdialogVisible = false
-      })
+    editcate() {
+      this.$refs.editcateFormRef.validate( (valid) => {
+        if (!valid) return;
+        editcate_api(this.editcateForm.cat_id, {
+          cat_name: this.editcateForm.cat_name,
+        }).then((res) => {
+          if (res.data.meta.status !== 200) {
+            return this.$message.error("修改分类失败!");
+          }
+          this.$message.success("修改分类成功!");
+          this.getcatelist();
+          this.editdialogVisible = false;
+        });
+      });
     },
-    async removecatebyid(id){
-            const confirmresult = await this.$confirm(
+    async removecatebyid(id) {
+      const confirmresult = await this.$confirm(
         "此操作将永久删除该商品分类, 是否继续?",
         "提示",
         {
@@ -248,13 +262,14 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      const {data:result} = await this.$http.delete("categories/"+id)
-      if (result.meta.status !== 200) {
-        return this.$message.error("删除失败!");
-      }
-      this.$message.success("删除成功!");
-      this.getcatelist();
-    }
+      removecatebyid_api(id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("删除失败!");
+        }
+        this.$message.success("删除成功!");
+        this.getcatelist();
+      });
+    },
   },
 };
 </script>

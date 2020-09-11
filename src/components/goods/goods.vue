@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <el-card>
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
@@ -9,7 +8,12 @@
       </el-breadcrumb>
       <el-row :gutter="25">
         <el-col :span="8">
-          <el-input placeholder="请输入内容" :clearable="true" v-model="queryinfo.query" @clear="getgoodslist">
+          <el-input
+            placeholder="请输入内容"
+            :clearable="true"
+            v-model="queryinfo.query"
+            @clear="getgoodslist"
+          >
             <el-button slot="append" icon="el-icon-search" @click="getgoodslist"></el-button>
           </el-input>
         </el-col>
@@ -52,6 +56,7 @@
 </template>
 
 <script>
+import { getgoodslist_api,removegoodbyid_api } from "../../api/goods_api";
 export default {
   data() {
     return {
@@ -70,15 +75,14 @@ export default {
     this.getgoodslist();
   },
   methods: {
-    async getgoodslist() {
-      const { data: result } = await this.$http.get("goods", {
-        params: this.queryinfo,
+    getgoodslist() {
+      getgoodslist_api(this.queryinfo).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取商品失败!");
+        }
+        this.goodslist = res.data.data.goods;
+        this.total = res.data.data.total;
       });
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取商品失败!");
-      }
-      this.goodslist = result.data.goods;
-      this.total = result.data.total;
     },
     handleCurrentChange(newpagenum) {
       this.queryinfo.pagenum = newpagenum;
@@ -101,16 +105,18 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      const { data: result } = await this.$http.delete("goods/" + id);
-      if (result.meta.status !== 200) {
+      removegoodbyid_api(id).then(res=>{
+      if (res.data.meta.status !== 200) {
         return this.$message.error("删除失败!");
       }
       this.$message.success("删除成功!");
       this.getgoodslist();
+      })
+
     },
-    gotoadd(){
-      this.$router.push('/goods/add')
-    }
+    gotoadd() {
+      this.$router.push("/goods/add");
+    },
   },
 };
 </script>

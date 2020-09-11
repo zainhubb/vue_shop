@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { login_api } from "../api/login_api";
 export default {
   data() {
     return {
@@ -60,29 +61,29 @@ export default {
     login() {
       this.$refs.loginFormRef.validate(async (res) => {
         if (!res) return;
-        const { data: result } = await this.$http.post("login", this.loginForm);
-        //把取得的对象中data对象给result
-        if (result.meta.status !== 200)
-          return this.$notify({
-            title: "登录失败!",
-            message: "请检查用户名和密码",
-            type: "error",
+        login_api(this.loginForm).then((res) => {
+          if (res.data.meta.status !== 200)
+            return this.$notify({
+              title: "登录失败!",
+              message: "请检查用户名和密码",
+              type: "error",
+              offset: 80,
+              position: "bottom-right",
+              duration: 2000,
+            });
+          this.$notify({
+            title: "登录成功!",
+            message: "欢迎来到本后台管理系统",
+            type: "success",
             offset: 80,
             position: "bottom-right",
             duration: 2000,
           });
-        this.$notify({
-          title: "登录成功!",
-          message: "欢迎来到本后台管理系统",
-          type: "success",
-          offset: 80,
-          position: "bottom-right",
-          duration: 2000,
+          window.sessionStorage.setItem("token", res.data.data.token);
+          //登录成功,存放token
+          this.$router.push("/home");
+          //登录后跳转到home页面
         });
-        window.sessionStorage.setItem("token", result.data.token);
-        //登录成功,存放token
-        this.$router.push("/home");
-        //登录后跳转到home页面
       });
     },
   },

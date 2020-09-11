@@ -18,7 +18,9 @@ import './plugins/element.js'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 Vue.use(VueQuillEditor, /* { default global options } */)
+
 axios.defaults.baseURL= baseurl
+
 // 在request拦截器中,展示进度条NProgress.start()
 axios.interceptors.request.use(config =>{
   config.headers.Authorization = window.sessionStorage.getItem("token")

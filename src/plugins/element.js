@@ -1,16 +1,15 @@
 import Vue from 'vue'
-import
-    { 
-        Form,FormItem,Input,Button,Message,
-        Container,Aside,Main,Header,Footer,
-        Menu,Submenu,MenuItem,Breadcrumb,BreadcrumbItem,
-        Card,Row,Col,Table,TableColumn,Switch,Tooltip,
-        Pagination,Dialog,MessageBox,Tag,Notification,
-        Tree,Select,Option,Cascader,Alert,Tabs,TabPane,
-        Step,Steps,CheckboxGroup,Checkbox,Upload,Timeline,
-        TimelineItem
+import {
+Form, FormItem, Input, Button, Message,
+Container, Aside, Main, Header, Footer,
+Menu, Submenu, MenuItem, Breadcrumb, BreadcrumbItem,
+Card, Row, Col, Table, TableColumn, Switch, Tooltip,
+Pagination, Dialog, MessageBox, Tag, Notification,
+Tree, Select, Option, Cascader, Alert, Tabs, TabPane,
+Step, Steps, CheckboxGroup, Checkbox, Upload, Timeline,
+TimelineItem
 
-    } 
+}
     from 'element-ui'
 
 

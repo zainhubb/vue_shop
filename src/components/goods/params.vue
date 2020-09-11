@@ -52,7 +52,12 @@
                   @blur="handleInputConfirm(scope.row)"
                   style="width:89.3px"
                 ></el-input>
-                <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                >+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column type="index" align="center" label="#"></el-table-column>
@@ -110,7 +115,12 @@
                   @blur="handleInputConfirm(scope.row)"
                   style="width:89.3px"
                 ></el-input>
-                <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                >+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column type="index" align="center" label="#"></el-table-column>
@@ -169,6 +179,15 @@
 </template>
 
 <script>
+import {
+  getcatelist_api,
+  getinfo_api,
+  addparams_api,
+  saveattrvals_api,
+  showeditdialog_api,
+  editparams_api,
+  removeparamsbyid_api
+} from "../../api/goods_api";
 export default {
   created() {
     this.getcatelist();
@@ -212,20 +231,21 @@ export default {
     };
   },
   methods: {
-    async getcatelist() {
-      const { data: result } = await this.$http.get("categories");
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取商品分类失败!");
-      }
-      this.catelist = result.data;
+    getcatelist() {
+      getcatelist_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取商品分类失败!");
+        }
+        this.catelist = res.data.data;
+      });
     },
     // 级联选择框选择后触发
     // 获取参数或属性数据
-    async getparams() {
+    getparams() {
       // 如果选择的不是第三级分类
       if (this.selectedkeys.length !== 3) {
-        this.manytable = []
-        this.onlytable = []
+        this.manytable = [];
+        this.onlytable = [];
         this.isbtndisabled = true;
         this.selectedkeys = [];
         this.cateid = "";
@@ -234,30 +254,25 @@ export default {
       //选择了三级分类后才可点击下方按钮
       this.isbtndisabled = false;
       this.cateid = this.selectedkeys[2];
-      const { data: result } = await this.$http.get(
-        `categories/${this.cateid}/attributes`,
-        {
-          params: { sel: this.activename },
+      getinfo_api(this.cateid, { sel: this.activename }).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取参数列表失败!");
         }
-      );
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取参数列表失败!");
-      }
-      result.data.forEach((item) => {
-        item.inputVisible = false
-        item.inputValue = ''
-        item.attr_vals = item.attr_vals ? item.attr_vals.split(" ") : [];
+        res.data.data.forEach((item) => {
+          item.inputVisible = false;
+          item.inputValue = "";
+          item.attr_vals = item.attr_vals ? item.attr_vals.split(" ") : [];
+        });
+        if (this.activename === "many") {
+          this.titleText = "添加动态参数";
+          this.labelText = "动态参数";
+          this.manytable = res.data.data;
+        } else {
+          this.titleText = "添加静态参数";
+          this.labelText = "静态属性";
+          this.onlytable = res.data.data;
+        }
       });
-      console.log(result.data);
-      if (this.activename === "many") {
-        this.titleText = "添加动态参数";
-        this.labelText = "动态参数";
-        this.manytable = result.data;
-      } else {
-        this.titleText = "添加静态参数";
-        this.labelText = "静态属性";
-        this.onlytable = result.data;
-      }
     },
     // tab页签点击触发
     handletabClick() {
@@ -268,59 +283,51 @@ export default {
       this.$refs.addFormRef.resetFields();
     },
     addparams() {
-      this.$refs.addFormRef.validate(async (valid) => {
+      this.$refs.addFormRef.validate((valid) => {
         if (!valid) {
           return;
         }
-        const { data: result } = await this.$http.post(
-          `categories/${this.cateid}/attributes`,
-          {
-            attr_name: this.addForm.attr_name,
-            attr_sel: this.activename,
+        addparams_api(this.cateid, {
+          attr_name: this.addForm.attr_name,
+          attr_sel: this.activename,
+        }).then((res) => {
+          if (res.data.meta.status !== 201) {
+            return this.$message.error("添加失败!");
           }
-        );
-
-        if (result.meta.status !== 201) {
-          return this.$message.error("添加失败!");
-        }
-        this.$message.success("添加成功!");
-        this.adddialogVisible = false;
-        this.getparams();
+          this.$message.success("添加成功!");
+          this.adddialogVisible = false;
+          this.getparams();
+        });
       });
     },
-    async showeditdialog(attr_id) {
+    showeditdialog(attr_id) {
       this.editdialogVisible = true;
-      const { data: result } = await this.$http.get(
-        `categories/${this.cateid}/attributes/${attr_id}`,
-        {
-          params: {
-            attr_sel: this.activename,
-          },
+      showeditdialog_api(this.cateid, attr_id, {
+        attr_sel: this.activename,
+      }).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取失败!");
         }
-      );
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取失败!");
-      }
-      this.editForm = result.data;
+        this.editForm = res.data.data;
+      });
     },
     editparams() {
-      this.$refs.editFormRef.validate(async (valid) => {
+      this.$refs.editFormRef.validate( (valid) => {
         if (!valid) {
           return;
         }
-        const { data: result } = await this.$http.put(
-          `categories/${this.cateid}/attributes/${this.editForm.attr_id}`,
-          {
-            attr_name: this.editForm.attr_name,
-            attr_sel: this.activename,
-          }
-        );
-        if (result.meta.status !== 200) {
+        editparams_api(this.cateid, this.editForm.attr_id, {
+          attr_name: this.editForm.attr_name,
+          attr_sel: this.activename,
+        }).then(res=>{
+          if (res.data.meta.status !== 200) {
           return this.$message.error("修改失败!");
         }
         this.$message.success("修改成功!");
         this.getparams();
         this.editdialogVisible = false;
+        })
+        
       });
     },
     async removeparamsbyid(id) {
@@ -337,54 +344,55 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      const { data: result } = await this.$http.delete(
-        `categories/${this.cateid}/attributes/${id}`
-      );
-      if (result.meta.status !== 200) {
+
+      removeparamsbyid_api(this.cateid,id).then(res=>{
+     if (res.data.meta.status !== 200) {
         return this.$message.error("删除失败!");
       }
       this.$message.success("删除成功!");
       this.getparams();
+      })
+ 
     },
     // 文本框失去焦点,或者按下了`enter`都会触发
-    handleInputConfirm(row){
-      if(row.inputValue.trim().length === 0){
-        row.inputValue = ''
-        row.inputVisible = false
-        return
+    handleInputConfirm(row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = "";
+        row.inputVisible = false;
+        return;
       }
       // 如果没有return 则表示输入的内容不为空,需做后续处理
-      row.attr_vals.push(row.inputValue)
-      row.inputValue = ''
-      row.inputVisible = false
+      row.attr_vals.push(row.inputValue);
+      row.inputValue = "";
+      row.inputVisible = false;
       // 发起请求保存此次操作
-      this.saveattrvals(row)
-
+      this.saveattrvals(row);
     },
-    async saveattrvals(row){
-      const{data:result} = await this.$http.put(`categories/${this.cateid}/attributes/${row.attr_id}`,{
-        attr_name:row.attr_name,
-        attr_sel:row.attr_sel,
-        attr_vals:row.attr_vals.join(' ')
-      })
-      if(result.meta.status !==200){
-        return this.$message.error("修改失败!")
-      }
-      return this.$message.success("修改成功!")
+    saveattrvals(row) {
+      saveattrvals_api(this.cateid, row.attr_id, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(" "),
+      }).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("修改失败!");
+        }
+        return this.$message.success("修改成功!");
+      });
     },
     // 点击按钮显示文本输入框
-    showInput(row){
-      row.inputVisible = true
+    showInput(row) {
+      row.inputVisible = true;
       // 让文本框自动获得焦点
       // $nextTick :当页面上元素被重新渲染之后才会执行回调函数中的代码
-      this.$nextTick(_ => {
-          this.$refs.saveTagInput.$refs.input.focus();
-        });
+      this.$nextTick((_) => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
     },
-    hadleclose(i,row){
-      row.attr_vals.splice(i,1)
-      this.saveattrvals(row)
-    }
+    hadleclose(i, row) {
+      row.attr_vals.splice(i, 1);
+      this.saveattrvals(row);
+    },
   },
 };
 </script>

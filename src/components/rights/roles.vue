@@ -53,7 +53,7 @@
           </template>
         </el-table-column>
         <!-- 索引列 -->
-        <el-table-column type="index"  align="center"></el-table-column>
+        <el-table-column type="index" align="center"></el-table-column>
         <el-table-column prop="roleName" label="角色名称" align="center"></el-table-column>
         <el-table-column prop="roleDesc" label="角色描述" align="center"></el-table-column>
         <el-table-column label="操作" width="125px">
@@ -152,6 +152,16 @@
 </template>
 
 <script>
+import {
+  getroles_api,
+  getrole_api,
+  addrole_api,
+  deleterole_api,
+  allotrights_api,
+  getrightstree_api,
+  editrole_api,
+  deleteright_api,
+} from "../../api/rights_api";
 export default {
   data() {
     return {
@@ -189,34 +199,32 @@ export default {
     this.getrolelist();
   },
   methods: {
-    async getrolelist() {
-      const { data: result } = await this.$http.get("roles");
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取角色列表失败!");
-      }
-      this.rolelist = result.data;
+    getrolelist() {
+      getroles_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取角色列表失败!");
+        }
+        this.rolelist = res.data.data;
+      });
     },
     resetadd() {
       this.$refs.addFormRef.resetFields();
     },
     addrole() {
-      this.$refs.addFormRef.validate(async (valid) => {
+      this.$refs.addFormRef.validate((valid) => {
         //若添加对话框验证不成功则返回
         if (!valid) {
           return;
         }
         //若添加对话框验证成功则发起添加角色的请求
-        const { data: result } = await this.$http.post(
-          "roles",
-          this.addroleForm
-        );
-        console.log(result);
-        if (result.meta.status !== 201) {
-          return this.$message.error("添加角色失败!");
-        }
-        this.getrolelist();
-        this.adddialogVisible = false;
-        this.$message.success("添加角色成功!");
+        addrole_api(this.addroleForm).then((res) => {
+          if (res.data.meta.status !== 201) {
+            return this.$message.error("添加角色失败!");
+          }
+          this.getrolelist();
+          this.adddialogVisible = false;
+          this.$message.success("添加角色成功!");
+        });
       });
     },
     async removerolebyid(id) {
@@ -233,43 +241,43 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      const { data: result } = await this.$http.delete("roles/" + id);
-      if (result.meta.status !== 200) {
-        return this.$message.error("删除失败!");
-      }
-      this.$message.success("删除成功!");
-      this.getrolelist();
+      deleterole_api(id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("删除失败!");
+        }
+        this.$message.success("删除成功!");
+        this.getrolelist();
+      });
     },
-    async showeditdialog(id) {
-      const { data: result } = await this.$http.get("roles/" + id);
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取角色信息失败");
-      }
-      this.editroleForm = result.data;
-      this.editdialogVisible = true;
+    showeditdialog(id) {
+      getrole_api(id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取角色信息失败");
+        }
+        this.editroleForm = res.data.data;
+        this.editdialogVisible = true;
+      });
     },
-    async editroleinfo() {
-      this.$refs.editroleFormRef.validate(async (res) => {
+    editroleinfo() {
+      this.$refs.editroleFormRef.validate((res) => {
         if (!res) {
           return;
         }
         // 若编辑对话框验证成功则发起修改用户信息的请求
-        const { data: result } = await this.$http.put(
-          "roles/" + this.editroleForm.roleId,
-          {
-            roleName: this.editroleForm.roleName,
-            roleDesc: this.editroleForm.roleDesc,
+        editrole_api(this.editroleForm.roleId, {
+          roleName: this.editroleForm.roleName,
+          roleDesc: this.editroleForm.roleDesc,
+        }).then((res) => {
+          if (res.data.meta.status !== 200) {
+            return this.$message.error("修改失败!");
           }
-        );
-        if (result.meta.status !== 200) {
-          return this.$message.error("修改失败!");
-        }
-        //修改成功关闭对话框
-        this.editdialogVisible = false;
-        //更新用户列表
-        this.getrolelist();
-        //提示修改成功
-        this.$message.success("修改成功!");
+          //修改成功关闭对话框
+          this.editdialogVisible = false;
+          //更新用户列表
+          this.getrolelist();
+          //提示修改成功
+          this.$message.success("修改成功!");
+        });
       });
     },
     //删除权限
@@ -287,25 +295,26 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      const { data: result } = await this.$http.delete(
-        `roles/${role.id}/rights/${rightid}`
-      );
-      if (result.meta.status !== 200) {
-        return this.$message.error("删除失败!");
-      }
-      this.$message.success("删除成功!");
-      role.children = result.data;
+
+      deleteright_api(role.id, rightid).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("删除失败!");
+        }
+        this.$message.success("删除成功!");
+        role.children = res.data.data;
+      });
     },
-    async showsetrightdialog(role) {
+    showsetrightdialog(role) {
       this.roleid = role.id;
-      const { data: result } = await this.$http.get("rights/tree");
-      if (result.meta.status !== 200) {
-        return this.$message.error("获取角色权限失败!");
-      }
-      //把获取到的角色权限保存
-      this.rightslist = result.data;
-      this.getleafkeys(role, this.defkeys);
-      this.setrightdialogVisible = true;
+      getrightstree_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("获取角色权限失败!");
+        }
+        //把获取到的角色权限保存
+        this.rightslist = res.data.data;
+        this.getleafkeys(role, this.defkeys);
+        this.setrightdialogVisible = true;
+      });
     },
     // 通过递归的方式获取角色下所有三级权限的id,并保存到defkeys数组中
     getleafkeys(node, arr) {
@@ -321,21 +330,20 @@ export default {
     resetsetright() {
       this.defkeys = [];
     },
-    async allotrights() {
+    allotrights() {
       const keys = [
         ...this.$refs.treeRef.getCheckedKeys(),
         ...this.$refs.treeRef.getHalfCheckedKeys(),
       ];
       const idStr = keys.join(",");
-      const {
-        data: result,
-      } = await this.$http.post(`roles/${this.roleid}/rights`, { rids: idStr });
-      if (result.meta.status !== 200) {
-        return this.$message.error("分配权限失败!");
-      }
-      this.setrightdialogVisible = false;
-      this.$message.success("分配权限成功!");
-      this.getrolelist();
+      allotrights_api(this.roleid, { rids: idStr }).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("分配权限失败!");
+        }
+        this.setrightdialogVisible = false;
+        this.$message.success("分配权限成功!");
+        this.getrolelist();
+      });
     },
   },
 };
