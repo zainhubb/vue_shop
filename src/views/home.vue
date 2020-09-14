@@ -65,7 +65,6 @@
 
 <script>
 import { getmenulist_api } from "../api/home_api";
-import axios from "axios";
 export default {
   data() {
     return {

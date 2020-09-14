@@ -1,8 +1,9 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import baseURL from '../baseUrl'
 const service = axios.create({
-    baseURL:'http://120.24.4.171:8888/api/private/v1'
+    baseURL:baseURL
 })
 service.interceptors.request.use(config =>{
     config.headers.Authorization = window.sessionStorage.getItem("token")
