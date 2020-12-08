@@ -17,29 +17,69 @@
             :clearable="true"
             @clear="getUserlist"
           >
-            <el-button slot="append" icon="el-icon-search" @click="getUserlist"></el-button>
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="getUserlist"
+            ></el-button>
           </el-input>
         </el-col>
         <!-- 添加用户 -->
         <el-col :span="5">
-          <el-button type="primary" @click="adddialogVisible = true">添加用户</el-button>
+          <el-button type="primary" @click="adddialogVisible = true"
+            >添加用户</el-button
+          >
         </el-col>
       </el-row>
       <!-- 用户列表 -->
-      <el-table :data="usersinfo" :border="true" style="width: 100%" :stripe="true">
-        <el-table-column type="index" label="#" align="center"></el-table-column>
-        <el-table-column prop="username" label="姓名" align="center"></el-table-column>
-        <el-table-column prop="mobile" label="电话" align="center"></el-table-column>
-        <el-table-column prop="email" label="邮箱" align="center"></el-table-column>
-        <el-table-column prop="role_name" label="角色" align="center"></el-table-column>
+      <el-table
+        :data="usersinfo"
+        :border="true"
+        style="width: 100%"
+        :stripe="true"
+      >
+        <el-table-column
+          type="index"
+          label="#"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="username"
+          label="姓名"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="mobile"
+          label="电话"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="email"
+          label="邮箱"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="role_name"
+          label="角色"
+          align="center"
+        ></el-table-column>
         <el-table-column prop="mg_state" label="状态" align="center">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state" active-color="#67C23A" inactive-color="#909399"></el-switch>
+            <el-switch
+              v-model="scope.row.mg_state"
+              active-color="#67C23A"
+              inactive-color="#909399"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="125px" align="center">
           <template slot-scope="scope">
-            <el-tooltip class="item" content="编辑" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="编辑"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="primary"
                 icon="el-icon-edit"
@@ -48,7 +88,12 @@
                 @click="showeditdialog(scope.row.id)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip class="item" content="分配角色" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="分配角色"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="warning"
                 icon="el-icon-setting"
@@ -57,7 +102,12 @@
                 @click="showsetroledialog(scope.row)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip class="item" content="删除" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="删除"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -74,15 +124,25 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryinfo.pagenum"
-        :page-sizes="[1,2,5,10]"
+        :page-sizes="[1, 2, 5, 10]"
         :page-size="queryinfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       ></el-pagination>
     </el-card>
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="adddialogVisible" width="45%" @close="resetadd">
-      <el-form :model="adduserForm" :rules="addRules" ref="adduserFormRef" label-width="70px">
+    <el-dialog
+      title="添加用户"
+      :visible.sync="adddialogVisible"
+      width="45%"
+      @close="resetadd"
+    >
+      <el-form
+        :model="adduserForm"
+        :rules="addRules"
+        ref="adduserFormRef"
+        label-width="70px"
+      >
         <el-form-item label="用户名" prop="username">
           <el-input v-model="adduserForm.username"></el-input>
         </el-form-item>
@@ -103,7 +163,12 @@
     </el-dialog>
     <!-- 编辑用户对话框 -->
     <el-dialog title="编辑用户" :visible.sync="editdialogVisible" width="45%">
-      <el-form :model="edituserForm" :rules="addRules" label-width="100px" ref="edituserFormRef">
+      <el-form
+        :model="edituserForm"
+        :rules="addRules"
+        label-width="100px"
+        ref="edituserFormRef"
+      >
         <el-form-item label="用户名">
           <el-input v-model="edituserForm.username" disabled></el-input>
         </el-form-item>
@@ -120,10 +185,15 @@
       </span>
     </el-dialog>
     <!-- 分配角色对话框 -->
-    <el-dialog title="分配角色" :visible.sync="setroledialogVisible" width="45%" @close="resetsetrole">
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setroledialogVisible"
+      width="45%"
+      @close="resetsetrole"
+    >
       <div>
-        <p>当前用户:{{this.userinfo.username}}</p>
-        <p>当前角色:{{this.userinfo.role_name}}</p>
+        <p>当前用户:{{ this.userinfo.username }}</p>
+        <p>当前角色:{{ this.userinfo.role_name }}</p>
         <p>
           分配新角色:
           <el-select v-model="selectedrole" placeholder="请选择">
@@ -154,7 +224,7 @@ import {
   edituser_api,
   adduser_api,
 } from "../../api/users_api";
-import {  getroles_api } from '../../api/rights_api'
+import { getroles_api } from "../../api/rights_api";
 export default {
   data() {
     //验证邮箱

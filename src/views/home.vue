@@ -1,11 +1,16 @@
 <template>
   <el-container class="home-container">
     <!-- 侧边栏 -->
-    <el-aside :width="iscollapse ? '60px':'200px'">
+    <el-aside :width="iscollapse ? '60px' : '200px'">
       <div class="logo">
         <router-link to="home">
           <img src="../assets/logo/logo2.png" />
-          <span :style="iscollapse ? {display: 'none'} : {display: 'inline-block'}">Vue-Shop</span>
+          <span
+            :style="
+              iscollapse ? { display: 'none' } : { display: 'inline-block' }
+            "
+            >Vue-Shop</span
+          >
         </router-link>
       </div>
       <el-menu
@@ -19,26 +24,30 @@
         :default-active="$route.path"
       >
         <!-- 一级菜单 -->
-        <el-submenu v-for="item in menulist" :key="item.id" :index="item.id+''">
+        <el-submenu
+          v-for="item in menulist"
+          :key="item.id"
+          :index="item.id + ''"
+        >
           <!-- 一级菜单的模板区域 -->
           <template slot="title">
             <!-- 图像 -->
             <i :class="iconObj[item.id]" class="iconfont"></i>
             <!-- 文字 -->
-            <span>{{item.authName}}</span>
+            <span>{{ item.authName }}</span>
           </template>
           <!-- 二级菜单 -->
           <el-menu-item
             v-for="subitem in item.children"
             :key="subitem.id"
-            :index="'/'+subitem.path"
+            :index="'/' + subitem.path"
           >
             <!-- 一级菜单的模板区域 -->
             <template slot="title">
               <!-- 图像 -->
               <i class="el-icon-menu"></i>
               <!-- 文字 -->
-              <span>{{subitem.authName}}</span>
+              <span>{{ subitem.authName }}</span>
             </template>
           </el-menu-item>
         </el-submenu>
@@ -47,9 +56,12 @@
     <el-container>
       <el-header>
         <div class="toggle-btn" @click="collapse">
-          <i :class="iscollapse ?'el-icon-s-unfold':'el-icon-s-fold'" style="line-height: 60px"></i>
+          <i
+            :class="iscollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
+            style="line-height: 60px"
+          ></i>
         </div>
-        <div style="float:right">
+        <div style="float: right">
           <el-button type="info" round @click="logout">退出登录</el-button>
         </div>
       </el-header>
@@ -85,7 +97,7 @@ export default {
   },
   methods: {
     logout() {
-      window.sessionStorage.removeItem("token"); //清除token
+      window.localStorage.removeItem("token"); //清除token
       this.$router.push("/login"); //跳转至登录页面
     },
     // async getMenulist() {
@@ -100,9 +112,19 @@ export default {
     // },
     getMenulist() {
       getmenulist_api().then((res) => {
-        if (res.data.meta.status !== 200)
+        if (res.data.meta.status !== 200) {
+          this.$router.push("/login");
           return this.$message.error(res.data.meta.msg);
+        }
         this.menulist = res.data.data;
+        this.$notify({
+          title: "登录成功!",
+          message: "欢迎来到本后台管理系统",
+          type: "success",
+          offset: 80,
+          position: "bottom-right",
+          duration: 2000,
+        });
       });
     },
     collapse() {

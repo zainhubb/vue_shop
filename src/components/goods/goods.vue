@@ -14,7 +14,11 @@
             v-model="queryinfo.query"
             @clear="getgoodslist"
           >
-            <el-button slot="append" icon="el-icon-search" @click="getgoodslist"></el-button>
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="getgoodslist"
+            ></el-button>
           </el-input>
         </el-col>
         <el-col :span="5">
@@ -23,14 +27,36 @@
       </el-row>
       <el-table :data="goodslist" border stripe>
         <el-table-column type="index" align="center"></el-table-column>
-        <el-table-column label="商品名称" prop="goods_name" align="center" width="600px"></el-table-column>
-        <el-table-column label="商品价格" prop="goods_price" align="center" width="100px"></el-table-column>
-        <el-table-column label="创建时间" prop="add_time" align="center" width="150px">
-          <template slot-scope="scope">{{scope.row.add_time*1000 | dateformat}}</template>
+        <el-table-column
+          label="商品名称"
+          prop="goods_name"
+          align="center"
+          width="600px"
+        ></el-table-column>
+        <el-table-column
+          label="商品价格"
+          prop="goods_price"
+          align="center"
+          width="100px"
+        ></el-table-column>
+        <el-table-column
+          label="创建时间"
+          prop="add_time"
+          align="center"
+          width="150px"
+        >
+          <template slot-scope="scope">{{
+            (scope.row.add_time * 1000) | dateformat
+          }}</template>
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-tooltip class="item" content="删除" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="删除"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -56,7 +82,7 @@
 </template>
 
 <script>
-import { getgoodslist_api,removegoodbyid_api } from "../../api/goods_api";
+import { getgoodslist_api, removegoodbyid_api } from "../../api/goods_api";
 export default {
   data() {
     return {
@@ -105,14 +131,13 @@ export default {
       if (confirmresult !== "confirm") {
         return this.$message.info("取消删除");
       }
-      removegoodbyid_api(id).then(res=>{
-      if (res.data.meta.status !== 200) {
-        return this.$message.error("删除失败!");
-      }
-      this.$message.success("删除成功!");
-      this.getgoodslist();
-      })
-
+      removegoodbyid_api(id).then((res) => {
+        if (res.data.meta.status !== 200) {
+          return this.$message.error("删除失败!");
+        }
+        this.$message.success("删除成功!");
+        this.getgoodslist();
+      });
     },
     gotoadd() {
       this.$router.push("/goods/add");

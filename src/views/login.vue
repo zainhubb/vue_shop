@@ -6,9 +6,18 @@
         <img src="../assets/logo/logo1.png" alt />
       </div>
       <!-- 登录框 -->
-      <el-form class="login_form" :model="loginForm" :rules="loginRules" ref="loginFormRef">
+      <el-form
+        class="login_form"
+        :model="loginForm"
+        :rules="loginRules"
+        ref="loginFormRef"
+      >
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" placeholder="账号" prefix-icon="iconfont icon-user"></el-input>
+          <el-input
+            v-model="loginForm.username"
+            placeholder="账号"
+            prefix-icon="iconfont icon-user"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -30,6 +39,7 @@
 
 <script>
 import { login_api } from "../api/login_api";
+import { getmenulist_api } from "../api/home_api";
 export default {
   data() {
     return {
@@ -71,21 +81,23 @@ export default {
               position: "bottom-right",
               duration: 2000,
             });
-          this.$notify({
-            title: "登录成功!",
-            message: "欢迎来到本后台管理系统",
-            type: "success",
-            offset: 80,
-            position: "bottom-right",
-            duration: 2000,
-          });
-          window.sessionStorage.setItem("token", res.data.data.token);
+          window.localStorage.setItem("token", res.data.data.token);
           //登录成功,存放token
           this.$router.push("/home");
           //登录后跳转到home页面
         });
       });
     },
+  },
+  created() {
+    if (window.localStorage.getItem("token")) {
+      getmenulist_api().then((res) => {
+        if (res.data.meta.status !== 200) {
+          return console.log("token无效");
+        }
+        this.$router.push("/welcome");
+      });
+    }
   },
 };
 </script>

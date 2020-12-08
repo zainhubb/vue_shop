@@ -6,35 +6,47 @@
         <el-breadcrumb-item>权限管理</el-breadcrumb-item>
         <el-breadcrumb-item>角色列表</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-button type="primary" @click="adddialogVisible = true">添加角色</el-button>
-      <el-table :data="rolelist" :border="true" style="width: 100%" :stripe="true">
+      <el-button type="primary" @click="adddialogVisible = true"
+        >添加角色</el-button
+      >
+      <el-table
+        :data="rolelist"
+        :border="true"
+        style="width: 100%"
+        :stripe="true"
+      >
         <!-- 权限展开展示 -->
         <el-table-column type="expand" label="展开" align="center">
           <template slot-scope="scope">
             <el-row
-              v-for="(item1,i1) in scope.row.children"
+              v-for="(item1, i1) in scope.row.children"
               :key="item1.id"
-              :class="['bdbottom',i1===0?'bdtop':'']"
+              :class="['bdbottom', i1 === 0 ? 'bdtop' : '']"
             >
               <!-- 渲染一级权限 -->
               <el-col :span="5">
-                <el-tag closable @close="removerightbyid(scope.row,item1.id)">{{item1.authName}}</el-tag>
+                <el-tag
+                  closable
+                  @close="removerightbyid(scope.row, item1.id)"
+                  >{{ item1.authName }}</el-tag
+                >
                 <i class="el-icon-caret-right"></i>
               </el-col>
               <!-- 渲染二级和三级权限 -->
               <el-col :span="19">
                 <el-row
-                  v-for="(item2,i2) in item1.children"
+                  v-for="(item2, i2) in item1.children"
                   :key="item2.id"
-                  :class="[i2===0?'':'bdtop']"
+                  :class="[i2 === 0 ? '' : 'bdtop']"
                 >
                   <!-- 二级权限 -->
                   <el-col :span="6">
                     <el-tag
                       type="success"
                       closable
-                      @close="removerightbyid(scope.row,item2.id)"
-                    >{{item2.authName}}</el-tag>
+                      @close="removerightbyid(scope.row, item2.id)"
+                      >{{ item2.authName }}</el-tag
+                    >
                     <i class="el-icon-caret-right"></i>
                   </el-col>
                   <!-- 三级权限 -->
@@ -44,8 +56,9 @@
                       :key="item3.id"
                       type="danger"
                       closable
-                      @close="removerightbyid(scope.row,item3.id)"
-                    >{{item3.authName}}</el-tag>
+                      @close="removerightbyid(scope.row, item3.id)"
+                      >{{ item3.authName }}</el-tag
+                    >
                   </el-col>
                 </el-row>
               </el-col>
@@ -54,12 +67,25 @@
         </el-table-column>
         <!-- 索引列 -->
         <el-table-column type="index" align="center"></el-table-column>
-        <el-table-column prop="roleName" label="角色名称" align="center"></el-table-column>
-        <el-table-column prop="roleDesc" label="角色描述" align="center"></el-table-column>
-        <el-table-column label="操作" width="125px">
+        <el-table-column
+          prop="roleName"
+          label="角色名称"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="roleDesc"
+          label="角色描述"
+          align="center"
+        ></el-table-column>
+        <el-table-column label="操作" width="125px" align="center">
           <!-- 三个操作按钮 -->
           <template slot-scope="scope">
-            <el-tooltip class="item" content="编辑" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="编辑"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="primary"
                 icon="el-icon-edit"
@@ -68,7 +94,12 @@
                 @click="showeditdialog(scope.row.id)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip class="item" content="分配权限" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="分配权限"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="warning"
                 icon="el-icon-setting"
@@ -77,7 +108,12 @@
                 @click="showsetrightdialog(scope.row)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip class="item" content="删除" placement="top" :enterable="false">
+            <el-tooltip
+              class="item"
+              content="删除"
+              placement="top"
+              :enterable="false"
+            >
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -91,7 +127,12 @@
       </el-table>
     </el-card>
     <!-- 添加角色对话框 -->
-    <el-dialog title="添加角色" :visible.sync="adddialogVisible" width="50%" @close="resetadd">
+    <el-dialog
+      title="添加角色"
+      :visible.sync="adddialogVisible"
+      width="50%"
+      @close="resetadd"
+    >
       <el-form
         :model="addroleForm"
         ref="addFormRef"
@@ -113,7 +154,12 @@
     </el-dialog>
     <!-- 编辑角色对话框 -->
     <el-dialog title="编辑用户" :visible.sync="editdialogVisible" width="50%">
-      <el-form :model="editroleForm" :rules="addrules" label-width="100px" ref="editroleFormRef">
+      <el-form
+        :model="editroleForm"
+        :rules="addrules"
+        label-width="100px"
+        ref="editroleFormRef"
+      >
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="editroleForm.roleName"></el-input>
         </el-form-item>

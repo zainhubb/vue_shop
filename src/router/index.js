@@ -35,7 +35,7 @@ const routes = [
       {
         path: '/reports',
         component: () => import('../components/reports/reports')
-      }, 
+      },
       {
         path: '/orders',
         component: () => import('../components/orders/orders')
@@ -74,7 +74,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login')
     return next()
   //如果去登录页,直接放行
-  const login_status = window.sessionStorage.getItem('token')
+  const login_status = window.localStorage.getItem('token')
   if (!login_status)
     return next('/login')
   next()
